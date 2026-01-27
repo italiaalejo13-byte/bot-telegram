@@ -6,7 +6,7 @@ import random
 import json
 import os
 
-TOKEN = os.environ.get "8448906991:AAHuNM7MBx6UZNJmoSTq0MbLaAdXJ-0zeIg"
+TOKEN = os.environ.get "BOT_TOKEN"
 
 # 👉 IDs de administradores (pon tu ID)
 ADMINS = [7131555659]
