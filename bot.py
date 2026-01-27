@@ -6,7 +6,6 @@ import random
 import json
 import os
 
-TOKEN = "8448906991:AAHuNM7MBx6UZNJmoSTq0MbLaAdXJ-0zeIg"
 TOKEN = os.environ.get "8448906991:AAHuNM7MBx6UZNJmoSTq0MbLaAdXJ-0zeIg"
 
 # 👉 IDs de administradores (pon tu ID)
