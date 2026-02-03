@@ -12,7 +12,7 @@ if not TOKEN:
     raise ValueError("BOT_TOKEN no encontrado")
     
 # 👉 IDs de administradores (pon tu ID)
-ADMINS = [7131555659]
+ADMINS = [7131555659] [8495130818]
 
 DATA_FILE = "datos.json"
 
@@ -94,6 +94,7 @@ def main():
     app.add_handler(CommandHandler("dado", dado))
     app.add_handler(CommandHandler("saludo", saludo))
     app.add_handler(CommandHandler("addsaldo", add_saldo))
+    app.add_handler(CommandHandler("bin", bin))
 
     app.run_polling()
 
