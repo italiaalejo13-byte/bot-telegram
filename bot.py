@@ -5,6 +5,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 import random
 import json
 import os
+import requests
 
 TOKEN = os.environ.get("BOT_TOKEN")
 
@@ -12,7 +13,7 @@ if not TOKEN:
     raise ValueError("BOT_TOKEN no encontrado")
     
 # 👉 IDs de administradores (pon tu ID)
-ADMINS = [7131555659] [8495130818]
+ADMINS = [7131555659, 8495130818]
 
 DATA_FILE = "datos.json"
 
@@ -43,7 +44,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "🤖 Bot encendido!\n\n"
         "/saldo\n"
         "/dado\n"
-        "/saludo"
+        "/saludo\n"
+        "/bin <bin_number>"
     )
 
 async def saldo(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -70,6 +72,31 @@ async def saludo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
     await update.message.reply_text(random.choice(saludos))
 
+# ---------- Consultar BIN ----------
+async def bin(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if context.args:
+        bin_number = context.args[0]  # Obtener el primer argumento después del comando
+        url = f'https://binlist.net/{bin_number}'
+        
+        try:
+            response = requests.get(url)
+            if response.status_code == 200:
+                data = response.json()
+                respuesta = (
+                    f"Información del BIN {bin_number}:\n"
+                    f"💳 Banco: {data.get('bank', {}).get('name', 'No disponible')}\n"
+                    f"🌍 País: {data.get('country', {}).get('name', 'No disponible')}\n"
+                    f"🏦 Tipo de tarjeta: {data.get('type', 'No disponible')}\n"
+                    f"💳 Marca: {data.get('scheme', 'No disponible')}"
+                )
+                await update.message.reply_text(respuesta)
+            else:
+                await update.message.reply_text(f"⚠️ No se encontró información para el BIN {bin_number}.")
+        except requests.RequestException as e:
+            await update.message.reply_text("Error al conectar con la API de Binlist.")
+    else:
+        await update.message.reply_text("❗ Debes proporcionar un número de BIN después del comando. Ejemplo: `/bin 411111`")
+
 # ---------- SOLO ADMINS ----------
 async def add_saldo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id not in ADMINS:
@@ -81,7 +108,7 @@ async def add_saldo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         cantidad = int(context.args[1])
         sumar_saldo(user_id, cantidad)
         await update.message.reply_text("✅ Saldo agregado")
-    except:
+    except (IndexError, ValueError):
         await update.message.reply_text("Uso: /addsaldo user_id cantidad")
 
 # ---------- MAIN ----------
